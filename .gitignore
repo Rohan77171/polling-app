@@ -1,26 +1,47 @@
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Instance folder (Flask specific)
+instance/
+
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
-env/
-venv/
-.venv/
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
 
 # Database
 *.db
 *.sqlite3
+*.sqlite
 
 # Environment variables
 .env
+.venv
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/

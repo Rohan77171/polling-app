@@ -41,7 +41,7 @@ python app.py
 
 5. Open http://localhost:5000 in your browser
 
-Project Structure 
+## Project Structure 
 
 polling-app/
 ├── app.py              # Main application
@@ -61,7 +61,7 @@ polling-app/
     ├── style.css
     └── script.js
 
-Usage
+## Usage
 
 1. Register a new account
 
@@ -75,6 +75,6 @@ Usage
 
 6. View real-time results
 
-License
+## License
 
 MIT License
