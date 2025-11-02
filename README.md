@@ -25,19 +25,23 @@ A full-stack web-based polling application built with Flask, featuring user auth
 ```bash
 git clone https://github.com/your-username/polling-app.git
 cd polling-app
+```
 
 2. Create virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate
+```
 
 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
+```
 
 4. Run the Application
 ```bash
 python app.py
+```
 
 5. Open http://localhost:5000 in your browser
 
