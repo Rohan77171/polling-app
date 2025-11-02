@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="poll-container">
+    <div class="poll-header">
+        <h1>{{ poll.question }}</h1>
+        <div class="poll-meta">
+            <p>Created by {{ poll.creator.username }} on {{ poll.created_at.strftime('%B %d, %Y at %H:%M') }}</p>
+            {% if poll.expires_at %}
+                <p>Expires: {{ poll.expires_at.strftime('%B %d, %Y at %H:%M') }}</p>
+                {% if poll.is_active %}
+                    <p class="time-left" data-expires="{{ poll.expires_at.isoformat() }}">
+                        Time left: Calculating...
+                    </p>
+                {% else %}
+                    <p class="poll-ended">This poll has ended</p>
+                {% endif %}
+            {% endif %}
+            {% if not poll.is_active %}
+                <p class="poll-ended">This poll has ended</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="poll-options" id="pollOptions">
+        {% for option in poll.options %}
+            <div class="option-item" data-option-id="{{ option.id }}">
+                <div class="option-text">{{ option.text }}</div>
+                {% if poll.is_active and not has_voted and current_user.is_authenticated %}
+                    <button class="btn-vote" onclick="vote({{ poll.id }}, {{ option.id }})">Vote</button>
+                {% elif has_voted %}
+                    <button class="btn-voted" disabled>Voted</button>
+                {% elif not current_user.is_authenticated %}
+                    <button class="btn-login" onclick="location.href='{{ url_for('login') }}'">Login to Vote</button>
+                {% endif %}
+                <div class="vote-count">Votes: <span id="votes-{{ option.id }}">{{ option.votes }}</span></div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="results-section">
+        <h3>Live Results</h3>
+        <div id="resultsChart"></div>
+    </div>
+
+    <div class="actions">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Home</a>
+        <button onclick="refreshResults({{ poll.id }})" class="btn btn-primary">Refresh Results</button>
+    </div>
+</div>
+
+<script>
+// Fixed function - removed the error
+function updatePollTimeLeft() {
+    const timeElement = document.querySelector('.time-left');
+    if (!timeElement) return;
+    
+    const expiresAt = new Date(timeElement.dataset.expires);
+    const now = new Date();
+    const timeLeft = expiresAt - now;
+    
+    if (timeLeft <= 0) {
+        timeElement.textContent = 'Time left: Expired';
+        timeElement.style.color = '#e74c3c';
+        location.reload(); // Reload to update poll status
+    } else {
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        timeElement.textContent = 'Time left: ' + hours + 'h ' + minutes + 'm';
+    }
+}
+
+// Update time left every minute
+setInterval(updatePollTimeLeft, 60000);
+updatePollTimeLeft(); // Initial update
+</script>
+{% endblock %}

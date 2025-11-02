@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>Welcome to PollApp</h1>
+    <p>Create and participate in polls with real-time results</p>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('create_poll') }}" class="btn btn-primary">Create New Poll</a>
+    {% else %}
+        <div class="auth-buttons">
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Login to Get Started</a>
+            <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="polls-grid">
+    <h2>Recent Polls</h2>
+    {% if polls %}
+        <div class="polls-list">
+            {% for poll in polls %}
+                <div class="poll-card {% if not poll.is_active %}poll-expired{% endif %}">
+                    <div class="poll-header">
+                        <h3>{{ poll.question }}</h3>
+                        <div class="poll-status">
+                            {% if poll.is_active %}
+                                <span class="status-active">Active</span>
+                            {% else %}
+                                <span class="status-expired">Ended</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="poll-meta">
+                        <p>By {{ poll.creator.username }} • {{ poll.created_at.strftime('%Y-%m-%d') }}</p>
+                        <p>Options: {{ poll.options|length }} • Total Votes: {{ poll.options|sum(attribute='votes') }}</p>
+                        
+                        {% if poll.expires_at %}
+                            {% if poll.is_active %}
+                                <p class="time-left" data-expires="{{ poll.expires_at.isoformat() }}">
+                                    Expires in: Calculating...
+                                </p>
+                            {% else %}
+                                <p class="poll-ended">Poll ended</p>
+                            {% endif %}
+                        {% else %}
+                            <p class="no-expiry">No expiration</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="poll-actions">
+                        <a href="{{ url_for('view_poll', poll_id=poll.id) }}" class="btn btn-secondary">
+                            {% if poll.is_active %}Vote Now{% else %}View Results{% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-polls">
+            <p>No polls available yet.</p>
+            {% if current_user.is_authenticated %}
+                <p><a href="{{ url_for('create_poll') }}">Create the first poll!</a></p>
+            {% else %}
+                <p><a href="{{ url_for('register') }}">Register</a> to create the first poll!</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Function to update time left for active polls
+function updateTimeLeft() {
+    const timeElements = document.querySelectorAll('.time-left');
+    const now = new Date();
+    
+    timeElements.forEach(element => {
+        const expiresAt = new Date(element.dataset.expires);
+        const timeLeft = expiresAt - now;
+        
+        if (timeLeft <= 0) {
+            element.textContent = 'Expired';
+            element.className = 'poll-ended';
+            // You might want to reload the page or update poll status
+            // location.reload();
+        } else {
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (days > 0) {
+                element.textContent = 'Expires in: ' + days + 'd ' + hours + 'h';
+            } else if (hours > 0) {
+                element.textContent = 'Expires in: ' + hours + 'h ' + minutes + 'm';
+            } else {
+                element.textContent = 'Expires in: ' + minutes + 'm';
+            }
+        }
+    });
+}
+
+// Update time left every minute
+setInterval(updateTimeLeft, 60000);
+updateTimeLeft(); // Initial update
+</script>
+{% endblock %}

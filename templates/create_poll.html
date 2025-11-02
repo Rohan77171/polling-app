@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Create New Poll</h1>
+    <form id="createPollForm" method="POST">
+        <div class="form-group">
+            <label for="question">Poll Question:</label>
+            <input type="text" id="question" name="question" required 
+                   placeholder="Enter your question here...">
+        </div>
+
+        <div class="form-group">
+            <label>Poll Duration (optional):</label>
+            <select name="duration" id="duration">
+                <option value="0">No expiration</option>
+                <option value="1">1 hour</option>
+                <option value="6">6 hours</option>
+                <option value="24">1 day</option>
+                <option value="168">1 week</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Options:</label>
+            <div id="options-container">
+                <div class="option-input">
+                    <input type="text" name="options" required placeholder="Option 1">
+                    <button type="button" class="btn-remove" onclick="removeOption(this)" style="display: none;">×</button>
+                </div>
+                <div class="option-input">
+                    <input type="text" name="options" required placeholder="Option 2">
+                    <button type="button" class="btn-remove" onclick="removeOption(this)" style="display: none;">×</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addOption()">Add Another Option</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Poll</button>
+    </form>
+</div>
+
+<script>
+function addOption() {
+    const container = document.getElementById('options-container');
+    const optionCount = container.children.length + 1;
+    const div = document.createElement('div');
+    div.className = 'option-input';
+    div.innerHTML = `
+        <input type="text" name="options" required placeholder="Option ${optionCount}">
+        <button type="button" class="btn-remove" onclick="removeOption(this)">×</button>
+    `;
+    container.appendChild(div);
+    
+    // Show remove buttons on all options if we have more than 2
+    if (container.children.length > 2) {
+        const removeButtons = container.querySelectorAll('.btn-remove');
+        removeButtons.forEach(btn => btn.style.display = 'inline-block');
+    }
+}
+
+function removeOption(button) {
+    const container = document.getElementById('options-container');
+    if (container.children.length > 2) {
+        button.parentElement.remove();
+        
+        // Hide remove buttons if we're back to 2 options
+        if (container.children.length === 2) {
+            const removeButtons = container.querySelectorAll('.btn-remove');
+            removeButtons.forEach(btn => btn.style.display = 'none');
+        }
+    }
+}
+</script>
+{% endblock %}
