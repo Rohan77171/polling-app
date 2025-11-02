@@ -45,26 +45,6 @@ python app.py
 
 5. Open http://localhost:5000 in your browser
 
-## Project Structure 
-
-polling-app/
-├── app.py              # Main application
-├── models.py           # Database models
-├── requirements.txt    # Dependencies
-├── README.md          # Documentation
-├── .gitignore         # Git ignore rules
-├── templates/         # HTML templates
-│   ├── base.html
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── create_poll.html
-│   ├── poll_results.html
-│   └── profile.html
-└── static/            # Static files
-    ├── style.css
-    └── script.js
-
 ## Usage
 
 1. Register a new account
